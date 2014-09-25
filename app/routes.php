@@ -11,7 +11,12 @@
 |
 */
 
-Route::get('/', function()
-{
-	return View::make('home.index');
+Route::get('/', function() {
+    return View::make('home.index')
+        ->with('cities', \Api\Controllers\WeatherController::$citiesZipArray)
+        ->with('title', 'Weather App');
+});
+
+Route::group(array('prefix' => 'weather'), function() {
+    Route::get('/{city}', '\Api\Controllers\WeatherController@index');
 });

@@ -51,6 +51,17 @@ App::error(function(Exception $exception, $code)
 	Log::error($exception);
 });
 
+
+/*
+|--------------------------------------------------------------------------
+| Implementation Bindings
+|--------------------------------------------------------------------------
+|
+| Quick way to bind implementation to contract without creating service providers.
+|
+*/
+App::bind('Company\Interfaces\Weather\WeatherInterface', 'Company\Repositories\Weather\WeatherRepository');
+
 /*
 |--------------------------------------------------------------------------
 | Maintenance Mode Handler
