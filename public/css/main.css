@@ -10,6 +10,10 @@ body {
     text-align: center;
 }
 
+#yimg {
+    margin-top: 24px;
+}
+
 @-webkit-keyframes throbber {
     0% {
         background: #dde2e7;

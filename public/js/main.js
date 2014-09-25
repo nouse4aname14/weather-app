@@ -41,12 +41,13 @@ $(function() {
 
         // Show or hide loading spinner.
         weatherForm.showSpinner = function(boolean) {
-            var spinner;
+            var spinnerContainer;
+            var spinner = '<div class="container spinner"><div class="center-throbber"><div class="throbber">Loading...</div></div></div>';
 
             if (boolean) {
-                $('body').append('<div class="container spinner"><div class="center-throbber"><div class="throbber">Loading...</div></div></div>');
-            } else if (!boolean && (spinner = $('.container.spinner'))) {
-                spinner.remove();
+                $('#main').append(spinner);
+            } else if (!boolean && (spinnerContainer = $('.container.spinner'))) {
+                spinnerContainer.remove();
             }
         };
 
@@ -63,14 +64,13 @@ $(function() {
         // Create the results layout.
         weatherForm.createResultsLayout = function(data) {
             var response = JSON.parse(data).query.results.channel;
-            var titleImage = '<a href="' + response.image.link + '" target="_blank"> <img src="' + response.image.url + '" alt="' + response.image.title + '" height="' + response.image.height + '" width="' + response.image.width + '" title="' + response.image.title + '" /></a>';
+            var titleImage = '<a href="' + response.image.link + '" target="_blank"> <img id="yimg" src="' + response.image.url + '" alt="' + response.image.title + '" height="' + response.image.height + '" width="' + response.image.width + '" title="' + response.image.title + '" /></a>';
             var metaInfo = '<h3>Meta Info:</h3><b>Language: </b>' + response.language + '<br /><b>Last Build Date: </b>' + response.lastBuildDate + '<br/><b>TTL: </b>' + response.ttl + '<br/><b>Title: </b>' + response.item.title + '<br/><b>Lat: </b>' + response.item.lat + '<br/><b>Long: </b>' + response.item.long + '<br/><b>Guid Is Permalink: </b>' + response.item.guid.isPermaLink + '<br/><b>Guid Content: </b>' + response.item.guid.content;
             var titleSection = '<div class="row"><div class="col-lg-6"><h2>' + response.title + '</h2>' + response.item.description + '</div><div class="col-lg-6">' + titleImage + metaInfo +'</div></div>';
             var fiveColumnSection = '<div class="row">' + weatherForm.createColumnItem(5, 'Location', response.location) + weatherForm.createColumnItem(5, 'Units', response.units) + weatherForm.createColumnItem(5, 'Wind', response.wind) + weatherForm.createColumnItem(5, 'Atmosphere', response.atmosphere) + weatherForm.createColumnItem(5, 'Astronomy', response.astronomy) + '</div>';
             var container = '<div id="results" class="container">' + titleSection + fiveColumnSection + '</div>';
 
             $('body').append(container);
-            console.log(response);
         };
 
         // Create a column item.
@@ -97,6 +97,7 @@ $(function() {
                 },
                 error: function() {
                     weatherForm.setError('An error occurred while processing the request.');
+                    weatherForm.showSpinner(false);
                 }
             });
         };
