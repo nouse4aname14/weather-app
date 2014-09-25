@@ -46,10 +46,10 @@ class WeatherController extends BaseController
             if ($weatherInformation !== false) {
                 return Response::make(json_encode($weatherInformation), 200);
             } else {
-                return Response::make(json_encode(['message' => 'Resource not found.']), 404);
+                return $this->resourceNotFound();
             }
         } else {
-            return 'This city is not available in this application.';
+            return Response::make(json_encode(['message' => 'This city is not available in this application.']), 404);
         }
     }
 
@@ -62,5 +62,15 @@ class WeatherController extends BaseController
     public static function isValidCity($city)
     {
         return array_key_exists($city, static::$citiesZipArray);
+    }
+
+    /**
+     * Create a resource not found message.
+     *
+     * @return Response
+     */
+    public function resourceNotFound()
+    {
+        return Response::make(json_encode(['message' => 'Resource not found.']), 404);
     }
 }
