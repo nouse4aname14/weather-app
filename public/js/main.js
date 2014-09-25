@@ -89,7 +89,7 @@ $(function() {
         weatherForm.request.getWeatherByCity = function(city) {
             $.ajax({
                 type: "GET",
-                url: "http://localhost:8888/weather-app/public/weather/" + city,
+                url: "/weather/" + city,
                 success: function(data) {
                     $('#results').remove();
                     weatherForm.createResultsLayout(data);
