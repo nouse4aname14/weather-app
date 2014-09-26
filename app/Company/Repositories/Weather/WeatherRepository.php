@@ -1,6 +1,7 @@
 <?php
 namespace Company\Repositories\Weather;
 
+use Api\Controllers\WeatherController;
 use Company\Interfaces\Weather\WeatherInterface;
 
 /**
@@ -26,6 +27,17 @@ class WeatherRepository implements WeatherInterface
     }
 
     /**
+     * Get the weather for multiple zip codes.
+     *
+     * @param array $zipCodes
+     * @return mixed
+     */
+    public function getWeatherByArrayOfZipCodes(array $zipCodes)
+    {
+        return $this->makeWeatherRequest($zipCodes);
+    }
+
+    /**
      * Create the url to make the weather request.
      *
      * @param $query
@@ -44,14 +56,24 @@ class WeatherRepository implements WeatherInterface
      */
     private function createWeatherQuery($zip)
     {
+        $zip = (array) $zip;
+        $selectCity = 'SELECT woeid FROM geo.places(1) WHERE ';
+        $count = count($zip);
+
+        for ($i = 0; $i < $count; $i++) {
+            if ($i + 1 == $count) {
+                $selectCity .= 'text="' . WeatherController::$citiesZipArray[$zip[$i]] . '"';
+            } else {
+                $selectCity .= 'text="' . WeatherController::$citiesZipArray[$zip[$i]] . '" OR ';
+            }
+        }
+
         return '
             SELECT *
             FROM weather.forecast
             WHERE woeid
             IN (
-                SELECT woeid
-                FROM geo.places(1)
-                WHERE text="' . $zip . '"
+                ' . $selectCity . '
             )
         ';
     }

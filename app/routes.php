@@ -19,4 +19,5 @@ Route::get('/', function() {
 
 Route::group(array('prefix' => 'weather'), function() {
     Route::get('/{city}', '\Api\Controllers\WeatherController@index');
+    Route::get('/cities/{cities}', '\Api\Controllers\WeatherController@listing');
 });

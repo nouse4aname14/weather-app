@@ -42,7 +42,7 @@ class WeatherController extends BaseController
     public function index($city)
     {
         if ($this->isValidCity($city)) {
-            $weatherInformation = $this->weather->getWeatherByZipCode(static::$citiesZipArray[$city]);
+            $weatherInformation = $this->weather->getWeatherByZipCode($city);
             if ($weatherInformation !== false) {
                 return Response::make(json_encode($weatherInformation), 200);
             } else {
@@ -50,6 +50,33 @@ class WeatherController extends BaseController
             }
         } else {
             return Response::make(json_encode(['message' => 'This city is not available in this application.']), 404);
+        }
+    }
+
+    /**
+     * Display weather information for multiple cities.
+     *
+     * @param $cities
+     * @return \Illuminate\Http\Response|Response
+     */
+    public function listing($cities)
+    {
+        $cities = explode(",", $cities);
+        $keys = array_keys(static::$citiesZipArray);
+        $invalidCity = array_diff($cities, $keys);
+
+        if (!empty($invalidCity)) {
+            foreach ($invalidCity as $key => $city) {
+                unset($cities[$key]);
+            }
+        }
+
+        $weatherInformation = $this->weather->getWeatherByArrayOfZipCodes($cities);
+
+        if ($weatherInformation !== false) {
+            return Response::make(json_encode($weatherInformation), 200);
+        } else {
+            return $this->resourceNotFound();
         }
     }
 

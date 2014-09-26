@@ -5,8 +5,7 @@
         <h1>{{ $title }}</h1>
         <p class="lead">Find the latest weather forecast for each city by selecting a city from the drop down menu and clicking search.</p>
         <div class="city-selector-container">
-            <select id="city-selector" class="form-control input-lg">
-                <option value="">Select a city</option>
+            <select multiple id="city-selector" class="form-control input-lg">
                 @foreach ($cities as $key => $city)
                 <option value="{{ $key }}">{{ ucfirst($key) }}</option>
                 @endforeach

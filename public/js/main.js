@@ -24,18 +24,18 @@ $(function() {
         // Set up events.
         weatherForm.setEvents = function() {
             weatherForm.button.click(function() {
-                var city = weatherForm.updateSelectedCity();
+                var cities = weatherForm.updateSelectedCity();
 
-                if (city != '' && city != 'Select a city') {
+                if (cities != null) {
                     weatherForm.showSpinner(true);
-                    weatherForm.request.getWeatherByCity(city);
+                    weatherForm.request.getWeatherResults(cities);
                 } else {
                     weatherForm.setError('Error, you must select a city.');
                 }
             });
 
             weatherForm.updateSelectedCity = function() {
-                return weatherForm.citySelector.find(':selected').val();
+                return weatherForm.citySelector.val();
             };
         };
 
@@ -64,13 +64,27 @@ $(function() {
         // Create the results layout.
         weatherForm.createResultsLayout = function(data) {
             var response = JSON.parse(data).query.results.channel;
-            var titleImage = '<a href="' + response.image.link + '" target="_blank"> <img id="yimg" src="' + response.image.url + '" alt="' + response.image.title + '" height="' + response.image.height + '" width="' + response.image.width + '" title="' + response.image.title + '" /></a>';
-            var metaInfo = '<h3>Meta Info:</h3><b>Language: </b>' + response.language + '<br /><b>Last Build Date: </b>' + response.lastBuildDate + '<br/><b>TTL: </b>' + response.ttl + '<br/><b>Title: </b>' + response.item.title + '<br/><b>Lat: </b>' + response.item.lat + '<br/><b>Long: </b>' + response.item.long + '<br/><b>Guid Is Permalink: </b>' + response.item.guid.isPermaLink + '<br/><b>Guid Content: </b>' + response.item.guid.content;
-            var titleSection = '<div class="row"><div class="col-lg-6"><h2>' + response.title + '</h2>' + response.item.description + '</div><div class="col-lg-6">' + titleImage + metaInfo +'</div></div>';
-            var fiveColumnSection = '<div class="row">' + weatherForm.createColumnItem(5, 'Location', response.location) + weatherForm.createColumnItem(5, 'Units', response.units) + weatherForm.createColumnItem(5, 'Wind', response.wind) + weatherForm.createColumnItem(5, 'Atmosphere', response.atmosphere) + weatherForm.createColumnItem(5, 'Astronomy', response.astronomy) + '</div>';
-            var container = '<div id="results" class="container">' + titleSection + fiveColumnSection + '</div>';
+            var rows = '';
 
-            $('body').append(container);
+            if (response.length > 1) {
+                for (var i =0; i < response.length; i++) {
+                    var titleImage = '<a href="' + response[i].image.link + '" target="_blank"> <img id="yimg" src="' + response[i].image.url + '" alt="' + response[i].image.title + '" height="' + response[i].image.height + '" width="' + response[i].image.width + '" title="' + response[i].image.title + '" /></a>';
+                    var metaInfo = '<h3>Meta Info:</h3><b>Language: </b>' + response[i].language + '<br /><b>Last Build Date: </b>' + response[i].lastBuildDate + '<br/><b>TTL: </b>' + response[i].ttl + '<br/><b>Title: </b>' + response[i].item.title + '<br/><b>Lat: </b>' + response[i].item.lat + '<br/><b>Long: </b>' + response[i].item.long + '<br/><b>Guid Is Permalink: </b>' + response[i].item.guid.isPermaLink + '<br/><b>Guid Content: </b>' + response[i].item.guid.content;
+                    var titleSection = '<div class="row"><div class="col-lg-6"><h2>' + response[i].title + '</h2>' + response[i].item.description + '</div><div class="col-lg-6">' + titleImage + metaInfo +'</div></div>';
+                    var fiveColumnSection = '<div class="row">' + weatherForm.createColumnItem(5, 'Location', response[i].location) + weatherForm.createColumnItem(5, 'Units', response[i].units) + weatherForm.createColumnItem(5, 'Wind', response[i].wind) + weatherForm.createColumnItem(5, 'Atmosphere', response[i].atmosphere) + weatherForm.createColumnItem(5, 'Astronomy', response[i].astronomy) + '</div>';
+                    rows += titleSection + fiveColumnSection;
+                }
+
+                $('body').append('<div id="results" class="container">' + rows + '</div>');
+
+            } else {
+                var titleImage = '<a href="' + response.image.link + '" target="_blank"> <img id="yimg" src="' + response.image.url + '" alt="' + response.image.title + '" height="' + response.image.height + '" width="' + response.image.width + '" title="' + response.image.title + '" /></a>';
+                var metaInfo = '<h3>Meta Info:</h3><b>Language: </b>' + response.language + '<br /><b>Last Build Date: </b>' + response.lastBuildDate + '<br/><b>TTL: </b>' + response.ttl + '<br/><b>Title: </b>' + response.item.title + '<br/><b>Lat: </b>' + response.item.lat + '<br/><b>Long: </b>' + response.item.long + '<br/><b>Guid Is Permalink: </b>' + response.item.guid.isPermaLink + '<br/><b>Guid Content: </b>' + response.item.guid.content;
+                var titleSection = '<div class="row"><div class="col-lg-6"><h2>' + response.title + '</h2>' + response.item.description + '</div><div class="col-lg-6">' + titleImage + metaInfo +'</div></div>';
+                var fiveColumnSection = '<div class="row">' + weatherForm.createColumnItem(5, 'Location', response.location) + weatherForm.createColumnItem(5, 'Units', response.units) + weatherForm.createColumnItem(5, 'Wind', response.wind) + weatherForm.createColumnItem(5, 'Atmosphere', response.atmosphere) + weatherForm.createColumnItem(5, 'Astronomy', response.astronomy) + '</div>';
+
+                $('body').append('<div id="results" class="container">' + titleSection + fiveColumnSection + '</div>');
+            }
         };
 
         // Create a column item.
@@ -86,10 +100,18 @@ $(function() {
         };
 
         // Make request to get the weather by city.
-        weatherForm.request.getWeatherByCity = function(city) {
+        weatherForm.request.getWeatherResults = function(city) {
+            var url = '';
+
+            if (city.length > 1) {
+                url = "http://localhost:8888/weather-app/public/weather/cities/" + city;
+            } else {
+                url = "http://localhost:8888/weather-app/public/weather/" + city;
+            }
+
             $.ajax({
                 type: "GET",
-                url: "/weather/" + city,
+                url: url,
                 success: function(data) {
                     $('#results').remove();
                     weatherForm.createResultsLayout(data);
