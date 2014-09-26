@@ -14,8 +14,8 @@ class WeatherController extends BaseController
      * @var array
      */
     public static $citiesZipArray = [
-        'irvine' => '92604',
-        'corona' => '92879',
+        'irvine'    => '92604',
+        'corona'    => '92879',
         'riverside' => '92504'
     ];
 
@@ -55,6 +55,7 @@ class WeatherController extends BaseController
 
     /**
      * Display weather information for multiple cities.
+     * GET /weather/cities/{cities}
      *
      * @param $cities
      * @return \Illuminate\Http\Response|Response

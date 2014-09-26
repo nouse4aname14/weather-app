@@ -14,6 +14,16 @@ body {
     margin-top: 24px;
 }
 
+.section {
+    margin-bottom: 25px;
+    padding: 15px;
+}
+
+.rowbg {
+    background: #eee;
+    border-radius: 6px;
+}
+
 @-webkit-keyframes throbber {
     0% {
         background: #dde2e7;

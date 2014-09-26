@@ -65,14 +65,17 @@ $(function() {
         weatherForm.createResultsLayout = function(data) {
             var response = JSON.parse(data).query.results.channel;
             var rows = '';
+            var counter = 1;
 
             if (response.length > 1) {
-                for (var i =0; i < response.length; i++) {
+                for (var i = 0; i < response.length; i++) {
                     var titleImage = '<a href="' + response[i].image.link + '" target="_blank"> <img id="yimg" src="' + response[i].image.url + '" alt="' + response[i].image.title + '" height="' + response[i].image.height + '" width="' + response[i].image.width + '" title="' + response[i].image.title + '" /></a>';
                     var metaInfo = '<h3>Meta Info:</h3><b>Language: </b>' + response[i].language + '<br /><b>Last Build Date: </b>' + response[i].lastBuildDate + '<br/><b>TTL: </b>' + response[i].ttl + '<br/><b>Title: </b>' + response[i].item.title + '<br/><b>Lat: </b>' + response[i].item.lat + '<br/><b>Long: </b>' + response[i].item.long + '<br/><b>Guid Is Permalink: </b>' + response[i].item.guid.isPermaLink + '<br/><b>Guid Content: </b>' + response[i].item.guid.content;
                     var titleSection = '<div class="row"><div class="col-lg-6"><h2>' + response[i].title + '</h2>' + response[i].item.description + '</div><div class="col-lg-6">' + titleImage + metaInfo +'</div></div>';
                     var fiveColumnSection = '<div class="row">' + weatherForm.createColumnItem(5, 'Location', response[i].location) + weatherForm.createColumnItem(5, 'Units', response[i].units) + weatherForm.createColumnItem(5, 'Wind', response[i].wind) + weatherForm.createColumnItem(5, 'Atmosphere', response[i].atmosphere) + weatherForm.createColumnItem(5, 'Astronomy', response[i].astronomy) + '</div>';
-                    rows += titleSection + fiveColumnSection;
+                    var background = counter % 2 == 0 ? 'rowbg' : '';
+                    rows += "<div class='section " + background + "'>" + titleSection + fiveColumnSection + "</div>";
+                    counter++;
                 }
 
                 $('body').append('<div id="results" class="container">' + rows + '</div>');
@@ -104,9 +107,9 @@ $(function() {
             var url = '';
 
             if (city.length > 1) {
-                url = "http://localhost:8888/weather-app/public/weather/cities/" + city;
+                url = "/weather/cities/" + city;
             } else {
-                url = "http://localhost:8888/weather-app/public/weather/" + city;
+                url = "/weather/" + city;
             }
 
             $.ajax({
