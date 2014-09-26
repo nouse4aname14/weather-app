@@ -96,8 +96,7 @@ $(function() {
                     weatherForm.showSpinner(false);
                 },
                 error: function(xhr) {
-                    var response = JSON.parse(xhr.responseText);
-                    weatherForm.setError(response.message);
+                    weatherForm.setError(JSON.parse(xhr.responseText).message);
                     weatherForm.showSpinner(false);
                 }
             });
