@@ -95,8 +95,9 @@ $(function() {
                     weatherForm.createResultsLayout(data);
                     weatherForm.showSpinner(false);
                 },
-                error: function() {
-                    weatherForm.setError('An error occurred while processing the request.');
+                error: function(xhr) {
+                    var response = JSON.parse(xhr.responseText);
+                    weatherForm.setError(response.message);
                     weatherForm.showSpinner(false);
                 }
             });
